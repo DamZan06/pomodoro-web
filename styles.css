@@ -1,0 +1,145 @@
+:root {
+  --primary: #4A90E2;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text: #222;
+  --muted: #666;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0f4ff, #fff);
+  padding: 24px;
+  color: var(--text);
+}
+
+.app {
+  width: 100%;
+  max-width: 420px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.timer-card {
+  background: var(--card-bg);
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(30, 40, 60, 0.08);
+  text-align: center;
+}
+
+.phase {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.time {
+  font-size: 64px;
+  font-weight: 700;
+  margin: 6px 0 12px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; /* spazio tra i pulsanti */
+  margin-bottom: 12px;
+}
+
+/* pulsanti sempre visibili ma con fade-in/out */
+.controls button {
+  padding: 14px;
+  font-size: 28px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s, transform 0.1s;
+}
+
+.controls button:active {
+  transform: scale(0.95);
+}
+
+/* pulsanti inattivi invisibili e non cliccabili */
+.inactive {
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+
+/* opzioni timer */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.options label {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.options input[type="number"] {
+  width: 80px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-left: 8px;
+}
+
+.file-label input[type="file"] {
+  display: block;
+  margin-top: 6px;
+}
+
+#removeBgBtn {
+  background: #999;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+}
+
+.hint {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 12px;
+}

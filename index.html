@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pomodoro Web</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- stile -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- icona per Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Pomodoro Timer</h1>
+    </header>
+
+    <main>
+      <div class="timer-card">
+        <div class="phase" id="phase">In attesa</div>
+        <div class="time" id="time">25:00</div>
+
+        <div class="controls">
+
+            <button id="startBtn">▶️</button>
+            <button id="pauseBtn">⏸️</button>
+            <button id="stopBtn">⏹️</button>
+        </div>
+
+        <div class="options">
+          <label>
+            Ripetizioni:
+            <input id="repsInput" type="number" min="1" value="4" />
+          </label>
+
+          <label class="file-label">
+            Scegli sfondo:
+            <input id="bgPicker" type="file" accept="image/*" />
+          </label>
+
+          <button id="removeBgBtn">Rimuovi sfondo</button>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
