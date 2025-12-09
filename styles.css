@@ -68,7 +68,7 @@ header h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px; /* spazio tra i pulsanti */
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -128,7 +128,7 @@ header h1 {
   padding: 6px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  background: none; /* nessuno sfondo */
+  background: none;
   color: var(--text);
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
