@@ -1,6 +1,6 @@
 :root {
   --primary: #4A90E2;
-  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.6);
   --text: #222;
   --muted: #666;
 }
@@ -155,3 +155,4 @@ footer {
   color: var(--muted);
   font-size: 12px;
 }
+
