@@ -29,10 +29,9 @@
         <div class="time" id="time">25:00</div>
 
         <div class="controls">
-
-            <button id="startBtn">▶️</button>
-            <button id="pauseBtn">⏸️</button>
-            <button id="stopBtn">⏹️</button>
+          <button id="startBtn">▶️</button>
+          <button id="pauseBtn">⏸️</button>
+          <button id="stopBtn">⏹️</button>
         </div>
 
         <div class="options">
@@ -41,12 +40,14 @@
             <input id="repsInput" type="number" min="1" value="4" />
           </label>
 
-          <label class="file-label">
-            Scegli sfondo:
-            <input id="bgPicker" type="file" accept="image/*" />
-          </label>
+          <div class="background-controls">
+            <!-- Aggiungi sfondo -->
+            <button id="addBgBtn" class="bg-btn" title="Aggiungi sfondo">Aggiungi sfondo</button>
 
-          <button id="removeBgBtn">Rimuovi sfondo</button>
+            <!-- Rimuovi sfondo -->
+            <button id="removeBgBtn" class="bg-btn" title="Rimuovi sfondo">Rimuovi sfondo</button>
+            </div>
+
         </div>
       </div>
     </main>
