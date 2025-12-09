@@ -72,29 +72,27 @@ header h1 {
   margin-bottom: 12px;
 }
 
-/* pulsanti sempre visibili ma con fade-in/out */
 .controls button {
-  padding: 14px;
-  font-size: 28px;
-  border-radius: 50%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 10px;
   border: none;
   background: var(--primary);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.3s, transform 0.1s;
+  transition: transform 0.1s;
 }
 
 .controls button:active {
   transform: scale(0.95);
 }
 
-/* pulsanti inattivi invisibili e non cliccabili */
+/* pulsanti inattivi */
 .inactive {
-  opacity: 0.2;
+  opacity: 0.5;
   pointer-events: none;
 }
-
 
 /* opzioni timer */
 .options {
@@ -117,18 +115,32 @@ header h1 {
   margin-left: 8px;
 }
 
-.file-label input[type="file"] {
-  display: block;
-  margin-top: 6px;
+/* pulsanti sfondo */
+.background-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
 }
 
-#removeBgBtn {
-  background: #999;
-  padding: 8px 12px;
+.bg-btn {
+  font-size: 16px;
+  padding: 6px 12px;
   border-radius: 8px;
-  color: #fff;
-  border: 0;
+  border: 1px solid #ccc;
+  background: none; /* nessuno sfondo */
+  color: var(--text);
   cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.bg-btn:hover {
+  background: rgba(0,0,0,0.05);
+  transform: scale(1.05);
+}
+
+.bg-btn input[type="file"] {
+  display: none;
 }
 
 .hint {
