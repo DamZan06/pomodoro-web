@@ -1,4 +1,4 @@
-// app.js - Pomodoro web con toggle Start/Pausa
+// app.js - Pomodoro Web con pulsanti sempre visibili e sfondo testuale
 
 const POMODORO = 25 * 60;
 const SHORT_BREAK = 5 * 60;
@@ -18,8 +18,15 @@ const startBtn = document.getElementById('startBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const stopBtn = document.getElementById('stopBtn');
 const repsInput = document.getElementById('repsInput');
-const bgPicker = document.getElementById('bgPicker');
 const removeBgBtn = document.getElementById('removeBgBtn');
+const addBgBtn = document.getElementById('addBgBtn');
+
+// input file nascosto per aggiungere sfondo
+const hiddenInput = document.createElement('input');
+hiddenInput.type = 'file';
+hiddenInput.accept = 'image/*';
+hiddenInput.style.display = 'none';
+document.body.appendChild(hiddenInput);
 
 // formato tempo MM:SS
 function formatTime(sec){
@@ -41,19 +48,17 @@ function updateUI(){
   updateButtons();
 }
 
+// aggiorna lo stato dei pulsanti
 function updateButtons(){
   if(phase === 'idle' || phase === 'finished'){
-    // Start attivo, gli altri inattivi
     startBtn.classList.remove('inactive');
     pauseBtn.classList.add('inactive');
     stopBtn.classList.add('inactive');
   } else if(running){
-    // Pausa e Stop attivi, Start inattivo
     startBtn.classList.add('inactive');
     pauseBtn.classList.remove('inactive');
     stopBtn.classList.remove('inactive');
   } else {
-    // Pausa: Start attivo per riprendere, Pause inattivo, Stop attivo
     startBtn.classList.remove('inactive');
     pauseBtn.classList.add('inactive');
     stopBtn.classList.remove('inactive');
@@ -144,8 +149,10 @@ repsInput.addEventListener('change', (e) => {
   updateUI();
 });
 
-// gestione sfondo
-bgPicker.addEventListener('change', (e) => {
+// gestione pulsanti sfondo
+addBgBtn.addEventListener('click', () => hiddenInput.click());
+
+hiddenInput.addEventListener('change', (e) => {
   const f = e.target.files && e.target.files[0];
   if(!f) return;
   const reader = new FileReader();
@@ -162,7 +169,7 @@ removeBgBtn.addEventListener('click', () => {
   document.body.style.background = 'linear-gradient(135deg,#f0f4ff,#fff)';
 });
 
-// eventi pulsanti
+// eventi pulsanti timer
 startBtn.addEventListener('click', startTimer);
 pauseBtn.addEventListener('click', pauseTimer);
 stopBtn.addEventListener('click', stopTimer);
