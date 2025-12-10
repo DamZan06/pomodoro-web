@@ -1,6 +1,7 @@
 :root {
   --primary: #4A90E2;
-  --card-bg: rgba(255, 255, 255, 0.3);
+  --card-opacity: 0.6;
+  --card-bg: rgba(255, 255, 255, var(--card-opacity));
   --text: #222;
   --muted: #666;
 }
@@ -34,22 +35,13 @@ header {
   margin-bottom: 18px;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 28px;
-}
-
-.subtitle {
-  margin: 4px 0 0;
-  color: var(--muted);
-}
-
 .timer-card {
   background: var(--card-bg);
   padding: 18px;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(30, 40, 60, 0.08);
   text-align: center;
+  transition: background 0.2s;
 }
 
 .phase {
@@ -67,7 +59,6 @@ header h1 {
 .controls {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 12px;
   margin-bottom: 12px;
 }
@@ -81,20 +72,8 @@ header h1 {
   color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s;
 }
 
-.controls button:active {
-  transform: scale(0.95);
-}
-
-/* pulsanti inattivi */
-.inactive {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* opzioni timer */
 .options {
   display: flex;
   flex-direction: column;
@@ -102,58 +81,58 @@ header h1 {
   align-items: center;
 }
 
-.options label {
-  font-size: 14px;
-  color: var(--text);
-}
-
-.options input[type="number"] {
-  width: 80px;
-  padding: 6px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  margin-left: 8px;
-}
-
-/* pulsanti sfondo */
-.background-controls {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.bg-btn {
-  font-size: 16px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: none;
-  color: var(--text);
+/* Pulsante Impostazioni */
+.settings-btn {
+  padding: 8px 12px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.bg-btn:hover {
-  background: rgba(0,0,0,0.05);
-  transform: scale(1.05);
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.bg-btn input[type="file"] {
+.hidden {
   display: none;
 }
 
-.hint {
-  margin-top: 14px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-footer {
+.modal-content {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 300px;
   text-align: center;
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 12px;
 }
 
+.bg-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: none;
+  margin: 6px 0;
+}
 
+.close-btn {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+}
