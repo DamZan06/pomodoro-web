@@ -1,5 +1,4 @@
 // app.js - Pomodoro Web con modal impostazioni + opacità regolabile
-
 const POMODORO = 25 * 60; // per test rapido
 const SHORT_BREAK = 5 * 60;
 const LONG_BREAK = 20 * 60;
@@ -263,4 +262,5 @@ opacitySlider.addEventListener('input', (e) => {
 });
 
 updateUI();
+
 
