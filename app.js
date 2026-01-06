@@ -39,8 +39,8 @@ const repsSettingsInput = document.getElementById('repsSettingsInput');
 const saveSettingsBtn = document.getElementById('saveSettings');
 
 // audio
-const workEndAudio = new Audio('sounds/work_end.mp3');   // torna al lavoro
-const breakEndAudio = new Audio('sounds/break_end.mp3'); // vai in pausa
+const breakEndAudio = new Audio('sounds/work_end.mp3');   // torna al lavoro
+const workEndAudio = new Audio('sounds/break_end.mp3'); // vai in pausa
 
 let previousCardBg = '';
 let originalOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-opacity'));
@@ -387,3 +387,4 @@ removeBgBtn.addEventListener('click', () => {
 
 loadSettings();
 updateUI();
+
