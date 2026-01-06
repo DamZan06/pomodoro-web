@@ -116,18 +116,48 @@ header {
   padding: 20px;
   border-radius: 12px;
   width: 90%;
-  max-width: 300px;
+  max-width: 320px;
   text-align: center;
 }
 
+/* Pulsanti aggiungi / rimuovi sfondo */
 .bg-btn {
   padding: 8px 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  background: none;
-  margin: 6px 0;
+  background: #f5f5f5;
+  font-size: 14px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  margin: 0 4px;
 }
 
+/* Gruppo opacità + pulsanti sfondo */
+.setting-row-bg {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.setting-row-bg .setting-item {
+  width: 100%;
+}
+
+.bg-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Pulsante slider */
+#opacitySlider {
+  width: 100%;
+}
+
+/* Pulsanti chiudi e ferma audio */
 .close-btn {
   margin-top: 12px;
   padding: 8px 12px;
@@ -147,6 +177,37 @@ header {
   margin-top: 10px;
 }
 
-.hidden {
-  display: none;
+/* Gruppo impostazioni */
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Riga singola impostazione: label + input + unità */
+.setting-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 40px; /* Label | Input | Unit */
+  align-items: center;
+  gap: 10px;
+}
+
+.setting-row label {
+  font-weight: 500;
+  font-size: 14px;
+  text-align: left;
+}
+
+.setting-row input {
+  padding: 6px;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.setting-row span {
+  font-size: 14px;
+  opacity: 0.6;
+  text-align: left;
 }
