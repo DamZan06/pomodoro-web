@@ -36,11 +36,16 @@ const shortBreakInput = document.getElementById('shortBreakInput');
 const longBreakInput = document.getElementById('longBreakInput');
 const repsSettingsInput = document.getElementById('repsSettingsInput');
 
+const saveSettingsBtn = document.getElementById('saveSettings');
+
 // audio
 const workEndAudio = new Audio('sounds/work_end.mp3');   // torna al lavoro
 const breakEndAudio = new Audio('sounds/break_end.mp3'); // vai in pausa
 
 let previousCardBg = '';
+let originalOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-opacity'));
+
+
 
 // input file nascosto (sfondo)
 const hiddenInput = document.createElement('input');
@@ -270,9 +275,6 @@ function updateDurations(){
   }
 }
 
-workInput.addEventListener('change', updateDurations);
-shortBreakInput.addEventListener('change', updateDurations);
-longBreakInput.addEventListener('change', updateDurations);
 
 // ===================== EVENTI =====================
 startBtn.addEventListener('click', startTimer);
@@ -281,33 +283,38 @@ stopBtn.addEventListener('click', stopTimer);
 
 // MODAL impostazioni
 settingsBtn.addEventListener('click', () => {
-  syncSettingsUI();
+  // salva opacità attuale prima di aprire il modal
+  originalOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-opacity'));
+
+  // sincronizza valori del modal
+  syncSettingsUI();  
+
+  // imposta lo slider nella posizione corretta
+  opacitySlider.value = originalOpacity;
+
   settingsModal.classList.remove('hidden');
 });
 
-closeSettings.addEventListener('click', () =>
-  settingsModal.classList.add('hidden')
-);
+
+// preview opacità mentre muovi lo slider
+opacitySlider.addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value);
+  document.documentElement.style.setProperty('--card-opacity', val);
+});
+
+// chiudi senza salvare → ripristina opacità originale
+closeSettings.addEventListener('click', () => {
+  document.documentElement.style.setProperty('--card-opacity', originalOpacity);
+  settingsModal.classList.add('hidden');
+});
+
 
 settingsModal.addEventListener('click', e => {
   if (e.target === settingsModal)
     settingsModal.classList.add('hidden');
 });
 
-opacitySlider.addEventListener('input', (e) => {
-  const val = e.target.value;
-  document.documentElement.style.setProperty('--card-opacity', val);
-  saveSettings();
-});
 
-repsSettingsInput.addEventListener('change', () => {
-  const v = parseInt(repsSettingsInput.value, 10);
-  if (!isNaN(v) && v > 0) {
-    repetitions = v;      // aggiorna la variabile principale
-    saveSettings();       // salva le impostazioni aggiornate
-    updateUI();           // aggiorna UI con le nuove ripetizioni
-  }
-});
 
 addBgBtn.addEventListener('click', () => hiddenInput.click());
 
@@ -342,6 +349,34 @@ hiddenInput.addEventListener('change', (e) => {
   };
 
   reader.readAsDataURL(file);
+});
+
+// Salva impostazioni dal modal
+
+saveSettingsBtn.addEventListener('click', () => {
+  const newWork = parseInt(workInput.value, 10) || Math.round(workDuration / 60);
+  const newShort = parseInt(shortBreakInput.value, 10) || Math.round(shortBreakDuration / 60);
+  const newLong = parseInt(longBreakInput.value, 10) || Math.round(longBreakDuration / 60);
+  const newReps = parseInt(repsSettingsInput.value, 10) || repetitions;
+  const newOpacity = parseFloat(opacitySlider.value) || originalOpacity;
+
+  // Applica i valori
+  workDuration = newWork * 60;
+  shortBreakDuration = newShort * 60;
+  longBreakDuration = newLong * 60;
+  repetitions = newReps;
+  document.documentElement.style.setProperty('--card-opacity', newOpacity);
+
+  // Salva tutto
+  saveSettings();
+
+  // Aggiorna UI se siamo in idle
+  if (phase === 'idle') {
+    remaining = workDuration;
+    updateUI();
+  }
+
+  settingsModal.classList.add('hidden');
 });
 
 removeBgBtn.addEventListener('click', () => {
