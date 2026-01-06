@@ -3,7 +3,7 @@
   --card-opacity: 0.6;
   --card-bg: rgba(255, 255, 255, var(--card-opacity));
   --text: #222;
-  --muted: #666;
+  --muted: #222;
 }
 
 * {
@@ -210,4 +210,20 @@ header {
   font-size: 14px;
   opacity: 0.6;
   text-align: left;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.save-btn {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
 }
