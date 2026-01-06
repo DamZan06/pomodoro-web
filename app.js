@@ -39,8 +39,8 @@ const repsSettingsInput = document.getElementById('repsSettingsInput');
 const saveSettingsBtn = document.getElementById('saveSettings');
 
 // audio
-const breakEndAudio = new Audio('sounds/work_end.mp3');   // torna al lavoro
-const workEndAudio = new Audio('sounds/break_end.mp3'); // vai in pausa
+const workEndAudio = new Audio('sounds/work_end.mp3');   // torna al lavoro
+const breakEndAudio = new Audio('sounds/break_end.mp3'); // vai in pausa
 
 let previousCardBg = '';
 let originalOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-opacity'));
@@ -241,13 +241,13 @@ function onPeriodEnd() {
       remaining = shortBreakDuration;
     }
 
-    showPhaseCard('#8be28b', breakEndAudio); // VERDE → pausa
+    showPhaseCard('#8be28b', workEndAudio); // VERDE → pausa
     startTimer();
   }
   else if (phase === 'shortBreak' || phase === 'longBreak') {
     phase = 'work';
     remaining = workDuration;
-    showPhaseCard('#f28c8c', workEndAudio); // ROSSO → torna al lavoro
+    showPhaseCard('#f28c8c', breakEndAudio); // ROSSO → torna al lavoro
     startTimer();
   }
 
@@ -387,4 +387,5 @@ removeBgBtn.addEventListener('click', () => {
 
 loadSettings();
 updateUI();
+
 
