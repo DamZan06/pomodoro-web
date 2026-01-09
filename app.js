@@ -1,19 +1,18 @@
-// app.js - Pomodoro Web con impostazioni complete + colori + audio
-
-// DURATE (in secondi)
+// ===================== DURATE (secondi) =====================
 let workDuration = 25 * 60;
 let shortBreakDuration = 5 * 60;
 let longBreakDuration = 20 * 60;
 
-// stato
+// ===================== STATO =====================
 let repetitions = 4;
 let currentRep = 0;
 let phase = 'idle';
 let remaining = workDuration;
 let running = false;
 let timerId = null;
+let endTime = null;
 
-// elementi UI
+// ===================== UI =====================
 const timeEl = document.getElementById('time');
 const phaseEl = document.getElementById('phase');
 const startBtn = document.getElementById('startBtn');
@@ -23,31 +22,31 @@ const stopBtn = document.getElementById('stopBtn');
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettings = document.getElementById('closeSettings');
+const saveSettingsBtn = document.getElementById('saveSettings');
 
 const opacitySlider = document.getElementById('opacitySlider');
-const removeBgBtn = document.getElementById('removeBgBtn');
 const addBgBtn = document.getElementById('addBgBtn');
-
-const stopAudioBtn = document.getElementById('stopAudioBtn');
-const timerCard = document.querySelector('.timer-card');
+const removeBgBtn = document.getElementById('removeBgBtn');
 
 const workInput = document.getElementById('workInput');
 const shortBreakInput = document.getElementById('shortBreakInput');
 const longBreakInput = document.getElementById('longBreakInput');
 const repsSettingsInput = document.getElementById('repsSettingsInput');
 
-const saveSettingsBtn = document.getElementById('saveSettings');
+const timerCard = document.querySelector('.timer-card');
+const stopAudioBtn = document.getElementById('stopAudioBtn');
 
-// audio
-const workEndAudio = new Audio('sounds/work_end.mp3');   // torna al lavoro
-const breakEndAudio = new Audio('sounds/break_end.mp3'); // vai in pausa
+// ===================== AUDIO =====================
+const workEndAudio = new Audio('sounds/break_end.mp3');
+const breakEndAudio = new Audio('sounds/work_end.mp3');
 
+// ===================== STATO VISIVO =====================
 let previousCardBg = '';
-let originalOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-opacity'));
+let originalOpacity = parseFloat(
+  getComputedStyle(document.documentElement).getPropertyValue('--card-opacity')
+);
 
-
-
-// input file nascosto (sfondo)
+// ===================== FILE INPUT =====================
 const hiddenInput = document.createElement('input');
 hiddenInput.type = 'file';
 hiddenInput.accept = 'image/*';
@@ -71,40 +70,34 @@ function hexToRgb(hex) {
 function updateUI() {
   timeEl.textContent = formatTime(remaining);
 
-  switch (phase) {
-    case 'idle': phaseEl.textContent = 'In attesa'; break;
-    case 'work': phaseEl.textContent = `Lavoro (${currentRep + 1}/${repetitions})`; break;
-    case 'shortBreak': phaseEl.textContent = 'Pausa breve'; break;
-    case 'longBreak': phaseEl.textContent = 'Pausa lunga'; break;
-    case 'finished': phaseEl.textContent = 'Completato'; break;
-  }
+  const map = {
+    idle: 'In attesa',
+    work: `Lavoro (${currentRep + 1}/${repetitions})`,
+    shortBreak: 'Pausa breve',
+    longBreak: 'Pausa lunga',
+    finished: 'Completato'
+  };
 
+  phaseEl.textContent = map[phase];
   updateButtons();
 }
 
 function updateButtons() {
-  if (phase === 'idle' || phase === 'finished') {
-    startBtn.classList.remove('inactive');
-    pauseBtn.classList.add('inactive');
-    stopBtn.classList.add('inactive');
-  } else if (running) {
-    startBtn.classList.add('inactive');
-    pauseBtn.classList.remove('inactive');
-    stopBtn.classList.remove('inactive');
-  } else {
-    startBtn.classList.remove('inactive');
-    pauseBtn.classList.add('inactive');
-    stopBtn.classList.remove('inactive');
-  }
+  startBtn.classList.toggle('inactive', running);
+  pauseBtn.classList.toggle('inactive', !running);
+  stopBtn.classList.toggle('inactive', phase === 'idle');
 }
 
-// ===================== TIMER =====================
+// ===================== TIMER (orologio reale) =====================
 function tick() {
+  if (!endTime) return;
+
+  remaining = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+
   if (remaining <= 0) {
     onPeriodEnd();
-    return;
   }
-  remaining--;
+
   updateUI();
 }
 
@@ -117,7 +110,8 @@ function startTimer() {
 
   if (!running) {
     running = true;
-    timerId = setInterval(tick, 1000);
+    endTime = Date.now() + remaining * 1000;
+    timerId = setInterval(tick, 500);
   }
 
   updateUI();
@@ -126,6 +120,8 @@ function startTimer() {
 function pauseTimer() {
   running = false;
   clearInterval(timerId);
+  remaining = Math.max(0, Math.round((endTime - Date.now()) / 1000));
+  endTime = null;
   updateUI();
 }
 
@@ -150,73 +146,21 @@ function showPhaseCard(colorHex, audio) {
   timerCard.style.backgroundColor =
     `rgba(${hexToRgb(colorHex)},${opacity})`;
 
-  stopAudioBtn.classList.remove('hidden');
   audio.currentTime = 0;
   audio.play();
+  stopAudioBtn.classList.remove('hidden');
 }
 
 function resetCardBackground() {
   timerCard.style.backgroundColor = previousCardBg;
 }
 
-stopAudioBtn.addEventListener('click', () => {
+stopAudioBtn.onclick = () => {
   workEndAudio.pause();
   breakEndAudio.pause();
-  workEndAudio.currentTime = 0;
-  breakEndAudio.currentTime = 0;
   resetCardBackground();
   stopAudioBtn.classList.add('hidden');
-});
-
-function saveSettings() {
-  try {
-    const bgImage = document.body.style.backgroundImage || '';
-
-    localStorage.setItem('pomodoroSettings', JSON.stringify({
-      workDuration,
-      shortBreakDuration,
-      longBreakDuration,
-      repetitions,
-      cardOpacity: getComputedStyle(document.documentElement)
-        .getPropertyValue('--card-opacity'),
-      backgroundImage: bgImage
-    }));
-  } catch (e) {
-    console.warn('Impossibile salvare le impostazioni (spazio insufficiente)');
-  }
-}
-
-function loadSettings() {
-  const saved = localStorage.getItem('pomodoroSettings');
-  if (!saved) return;
-
-  try {
-    const data = JSON.parse(saved);
-
-    if (data.workDuration) workDuration = data.workDuration;
-    if (data.shortBreakDuration) shortBreakDuration = data.shortBreakDuration;
-    if (data.longBreakDuration) longBreakDuration = data.longBreakDuration;
-    if (data.repetitions) repetitions = data.repetitions;
-
-    if (data.cardOpacity) {
-      document.documentElement.style
-        .setProperty('--card-opacity', data.cardOpacity);
-      opacitySlider.value = data.cardOpacity;
-    }
-
-    if (data.backgroundImage) {
-      document.body.style.backgroundImage = data.backgroundImage;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-    }
-
-    if (phase === 'idle') {
-      remaining = workDuration;
-    }
-  } catch (e) {
-    console.warn('Errore nel caricare le impostazioni');
-  }
-}
+};
 
 // ===================== FINE PERIODO =====================
 function onPeriodEnd() {
@@ -233,159 +177,112 @@ function onPeriodEnd() {
       return;
     }
 
-    if (currentRep % 4 === 0) {
-      phase = 'longBreak';
-      remaining = longBreakDuration;
-    } else {
-      phase = 'shortBreak';
-      remaining = shortBreakDuration;
-    }
+    phase = currentRep % 4 === 0 ? 'longBreak' : 'shortBreak';
+    remaining = phase === 'longBreak' ? longBreakDuration : shortBreakDuration;
 
-    showPhaseCard('#8be28b', workEndAudio); // VERDE → pausa
-    startTimer();
-  }
-  else if (phase === 'shortBreak' || phase === 'longBreak') {
+    showPhaseCard('#8be28b', breakEndAudio);
+  } else {
     phase = 'work';
     remaining = workDuration;
-    showPhaseCard('#f28c8c', breakEndAudio); // ROSSO → torna al lavoro
-    startTimer();
+
+    showPhaseCard('#f28c8c', workEndAudio);
   }
 
+  endTime = Date.now() + remaining * 1000;
+  running = true;
+  timerId = setInterval(tick, 500);
   updateUI();
 }
 
+// ===================== IMPOSTAZIONI =====================
 function syncSettingsUI() {
-  workInput.value = Math.round(workDuration / 60);
-  shortBreakInput.value = Math.round(shortBreakDuration / 60);
-  longBreakInput.value = Math.round(longBreakDuration / 60);
+  workInput.value = workDuration / 60;
+  shortBreakInput.value = shortBreakDuration / 60;
+  longBreakInput.value = longBreakDuration / 60;
   repsSettingsInput.value = repetitions;
 }
 
-// ===================== IMPOSTAZIONI =====================
-function updateDurations(){
-  workDuration = parseInt(workInput.value, 10) * 60;
-  shortBreakDuration = parseInt(shortBreakInput.value, 10) * 60;
-  longBreakDuration = parseInt(longBreakInput.value, 10) * 60;
-
-  saveSettings();
-
-  if (phase === 'idle') {
-    remaining = workDuration;
-    updateUI();
-  }
-}
-
-
-// ===================== EVENTI =====================
-startBtn.addEventListener('click', startTimer);
-pauseBtn.addEventListener('click', pauseTimer);
-stopBtn.addEventListener('click', stopTimer);
-
-// MODAL impostazioni
-settingsBtn.addEventListener('click', () => {
-  // salva opacità attuale prima di aprire il modal
-  originalOpacity = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--card-opacity'));
-
-  // sincronizza valori del modal
-  syncSettingsUI();  
-
-  // imposta lo slider nella posizione corretta
+settingsBtn.onclick = () => {
+  originalOpacity = parseFloat(
+    getComputedStyle(document.documentElement).getPropertyValue('--card-opacity')
+  );
+  syncSettingsUI();
   opacitySlider.value = originalOpacity;
-
   settingsModal.classList.remove('hidden');
-});
+};
 
+opacitySlider.oninput = e =>
+  document.documentElement.style.setProperty('--card-opacity', e.target.value);
 
-// preview opacità mentre muovi lo slider
-opacitySlider.addEventListener('input', (e) => {
-  const val = parseFloat(e.target.value);
-  document.documentElement.style.setProperty('--card-opacity', val);
-});
-
-// chiudi senza salvare → ripristina opacità originale
-closeSettings.addEventListener('click', () => {
+closeSettings.onclick = () => {
   document.documentElement.style.setProperty('--card-opacity', originalOpacity);
   settingsModal.classList.add('hidden');
-});
+};
 
+saveSettingsBtn.onclick = () => {
+  workDuration = workInput.value * 60;
+  shortBreakDuration = shortBreakInput.value * 60;
+  longBreakDuration = longBreakInput.value * 60;
+  repetitions = repsSettingsInput.value;
 
-settingsModal.addEventListener('click', e => {
-  if (e.target === settingsModal)
-    settingsModal.classList.add('hidden');
-});
+  saveSettings();
+  settingsModal.classList.add('hidden');
+};
 
+// ===================== BACKGROUND =====================
+addBgBtn.onclick = () => hiddenInput.click();
 
-
-addBgBtn.addEventListener('click', () => hiddenInput.click());
-
-hiddenInput.addEventListener('change', (e) => {
-  const file = e.target.files?.[0];
+hiddenInput.onchange = e => {
+  const file = e.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
-
   reader.onload = () => {
-    const img = new Image();
-    img.onload = () => {
-      const MAX_WIDTH = 1600;
-      const scale = Math.min(1, MAX_WIDTH / img.width);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      const compressed = canvas.toDataURL('image/jpeg', 0.7);
-
-      document.body.style.backgroundImage = `url(${compressed})`;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-
-      saveSettings();
-    };
-    img.src = reader.result;
+    document.body.style.backgroundImage = `url(${reader.result})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    saveSettings();
   };
-
   reader.readAsDataURL(file);
-});
+};
 
-// Salva impostazioni dal modal
-
-saveSettingsBtn.addEventListener('click', () => {
-  const newWork = parseInt(workInput.value, 10) || Math.round(workDuration / 60);
-  const newShort = parseInt(shortBreakInput.value, 10) || Math.round(shortBreakDuration / 60);
-  const newLong = parseInt(longBreakInput.value, 10) || Math.round(longBreakDuration / 60);
-  const newReps = parseInt(repsSettingsInput.value, 10) || repetitions;
-  const newOpacity = parseFloat(opacitySlider.value) || originalOpacity;
-
-  // Applica i valori
-  workDuration = newWork * 60;
-  shortBreakDuration = newShort * 60;
-  longBreakDuration = newLong * 60;
-  repetitions = newReps;
-  document.documentElement.style.setProperty('--card-opacity', newOpacity);
-
-  // Salva tutto
-  saveSettings();
-
-  // Aggiorna UI se siamo in idle
-  if (phase === 'idle') {
-    remaining = workDuration;
-    updateUI();
-  }
-
-  settingsModal.classList.add('hidden');
-});
-
-removeBgBtn.addEventListener('click', () => {
+removeBgBtn.onclick = () => {
   document.body.style.backgroundImage = '';
-  document.body.style.background = 'linear-gradient(135deg,#f0f4ff,#fff)';
   saveSettings();
-});
+};
 
+// ===================== STORAGE =====================
+function saveSettings() {
+  localStorage.setItem('pomodoroSettings', JSON.stringify({
+    workDuration,
+    shortBreakDuration,
+    longBreakDuration,
+    repetitions,
+    cardOpacity: getComputedStyle(document.documentElement)
+      .getPropertyValue('--card-opacity'),
+    backgroundImage: document.body.style.backgroundImage
+  }));
+}
+
+function loadSettings() {
+  const s = JSON.parse(localStorage.getItem('pomodoroSettings') || '{}');
+  Object.assign({
+    workDuration,
+    shortBreakDuration,
+    longBreakDuration,
+    repetitions
+  }, s);
+
+  if (s.cardOpacity)
+    document.documentElement.style.setProperty('--card-opacity', s.cardOpacity);
+  if (s.backgroundImage)
+    document.body.style.backgroundImage = s.backgroundImage;
+}
+
+// ===================== AVVIO =====================
 loadSettings();
 updateUI();
 
-
+startBtn.onclick = startTimer;
+pauseBtn.onclick = pauseTimer;
+stopBtn.onclick = stopTimer;
